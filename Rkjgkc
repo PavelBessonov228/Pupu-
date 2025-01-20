@@ -1,0 +1,27 @@
+# Функция для извлечения времени и статуса из строки
+def parse_line(line):
+    parts = line.split()  # разделяем по пробелам под номерами 0,1,2
+    time_str = parts[1][0:-1]  # убираем символ с конца
+    status = parts[2]
+    
+    hour, minute, second = map(int, time_str.split(':'))  # мап делает функцию для каждой переменной
+    
+    return f'{parts[0][1:]} {hour}:00', status  # возвращаем только часы
+
+# Открываем файлы для чтения и записи
+with open('events.txt', 'r') as input_file, open('output.txt', 'w') as output_file:
+    line1 = input_file.readline()  # прочитать 1 строку
+    hour1, status = parse_line(line1.strip())  # убираем \n и парсим
+    k = 1  # начинаем с 1, так как первая строка уже прочитана
+
+    for line in input_file:
+        hour, status = parse_line(line.strip())
+        if hour == hour1:
+            k += 1  # увеличиваем счетчик для каждого события
+        else:
+            output_file.write(f"{hour1} {k}\n")  # записываем результат в файл
+            hour1 = hour
+            k = 1  # сбрасываем счетчик и начинаем с 1 для нового часа
+
+    # Записываем данные последнего часа
+    output_file.write(f"{hour1} {k}\n")
